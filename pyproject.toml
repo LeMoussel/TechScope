@@ -18,9 +18,6 @@ playwright = "^1.47.0"
 loguru = "^0.7.2"
 
 
-[tool.poetry.group.dev.dependencies]
-austin-dist = "^3.7.0"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

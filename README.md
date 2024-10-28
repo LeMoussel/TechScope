@@ -6,11 +6,23 @@
 
 We're currently using `technologies` files maintained by the [Pentest-Tools.com](https://pentest-tools.com/) team on [their fork of Wappalyzer](https://github.com/pentesttoolscom/wappalyzer).
 
+## Prerequisites
+
+- [Python](https://www.python.org/) version 3.10 or higher
+- [Playwright for Python](https://playwright.dev/python/)
+- [Git](https://git-scm.com)
+
+## Installation
+
+
+## Usage
+
+
 ## Specification
 
 A long list of [regular expressions](https://docs.python.org/3.10/library/re.html) is used to identify technologies on web pages. TechScope inspects HTML code, as well as JavaScript variables, response headers and more.
 
-**TODO**
+Patterns (regular expressions) are kept in [`src/technologies/`](https://github.com/LeMoussel/TechScope/tree/master/techscope/data/technologies). The following is an example of an application fingerprint.
 
 ### Example
 
@@ -70,7 +82,7 @@ A long list of [regular expressions](https://docs.python.org/3.10/library/re.htm
 
 ## JSON fields
 
-Find the JSON schema at [`schema.json`]() **TODO**
+Find the JSON schema at [`schema.json`](https://github.com/LeMoussel/TechScope/tree/master/techscope/data/schema.json).
 
 ### Required properties
 
@@ -463,3 +475,11 @@ Application version information can be obtained from a pattern using a capture g
     </tr>
   </tbody>
 </table>
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to this project, please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
