@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/BSD-2-Clause)
 [![Python](https://img.shields.io/badge/python-3.10-blue)](https://www.python.org/)
 
-**TechScope** is a python librry designed to identifies technologies on websites, such as CMS, web frameworks, ecommerce platforms, JavaScript libraries, analytics tools and more.
+**TechScope** is a Python library built to detect and identify various technologies used on websites, including content management systems (CMS), web frameworks, e-commerce platforms, JavaScript libraries, analytics tools, and more.
 
 We're currently using `technologies` files maintained by the [Pentest-Tools.com](https://pentest-tools.com/) team on [their fork of Wappalyzer](https://github.com/pentesttoolscom/wappalyzer).
 
