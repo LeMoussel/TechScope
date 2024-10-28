@@ -1,14 +1,12 @@
-# TechScope
-
-[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
-
-<img style="margin-right: 1rem;" align="left" height="72" src="icon_192.png" alt="TechScope" />
+# <img style="margin-right: 1rem;" align="left" height="72" src="icon_192.png" alt="TechScope" />TechScope
 
 <br>
+
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![Python](https://img.shields.io/badge/python-3.10-blue)](https://www.python.org/)
 
 **TechScope** is a python librry designed to identifies technologies on websites, such as CMS, web frameworks, ecommerce platforms, JavaScript libraries, analytics tools and more.
 
-<br>
 
 We're currently using `technologies` files maintained by the [Pentest-Tools.com](https://pentest-tools.com/) team on [their fork of Wappalyzer](https://github.com/pentesttoolscom/wappalyzer).
 
