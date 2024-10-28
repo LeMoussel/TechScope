@@ -7,7 +7,6 @@
 
 **TechScope** is a python librry designed to identifies technologies on websites, such as CMS, web frameworks, ecommerce platforms, JavaScript libraries, analytics tools and more.
 
-
 We're currently using `technologies` files maintained by the [Pentest-Tools.com](https://pentest-tools.com/) team on [their fork of Wappalyzer](https://github.com/pentesttoolscom/wappalyzer).
 
 ## Prerequisites
@@ -18,9 +17,11 @@ We're currently using `technologies` files maintained by the [Pentest-Tools.com]
 
 ## Installation
 
+TODO
 
 ## Usage
 
+TODO
 
 ## Specification
 
