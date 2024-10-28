@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-<img style="float: left;margin-right: 1rem;" height="72" src="icon_192.png" alt="TechScope" />
+<img style="margin-right: 1rem;" align="left" height="72" src="icon_192.png" alt="TechScope" />
 
 <br>
 
