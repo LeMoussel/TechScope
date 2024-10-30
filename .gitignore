@@ -165,6 +165,7 @@ cython_debug/
 .vscode
 
 # Miscellaneous
+example-techscope.json
 example.py
 poetry.lock
 poetry info.md

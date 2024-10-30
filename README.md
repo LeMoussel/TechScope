@@ -3,7 +3,7 @@
 <br>
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/BSD-2-Clause)
-[![Python](https://img.shields.io/badge/python-3.10-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 
 **TechScope** is a Python library built to detect and identify various technologies used on websites, including content management systems (CMS), web frameworks, e-commerce platforms, JavaScript libraries, analytics tools, and more.
 
@@ -13,15 +13,56 @@ We're currently using `technologies` files maintained by the [Pentest-Tools.com]
 
 - [Python](https://www.python.org/) version 3.10 or higher
 - [Playwright for Python](https://playwright.dev/python/)
-- [Git](https://git-scm.com)
 
 ## Installation
 
-TODO
+TechScope is a breeze to get started.We only require at least Python 3.10 to work and the rest of the requirements are installed automatically with the package.
+
+```bash
+# Using pip
+pip install techscope
+
+# Or the latest from GitHub
+pip install git+https://github.com/LeMoussel/TechScope@master
+
+# TechScope uses PlayWright
+# It is necessary to install the browsers required by Playwright
+playwright install
+```
 
 ## Usage
 
-TODO
+Let's look at a basic example that illustrates TechScope's functionality:
+
+```python
+import os
+import json
+
+from techscope import TechScope, PlaywrightError as PWError
+
+if __name__ == "__main__":
+    os.system("cls || clear")
+
+    SITE_URL = "https://stackoverflow.com/"
+
+    TechScope.log.info(f"Use Playwright version: {TechScope.playwright_version}")
+
+    try:
+        with TechScope() as ts:
+            ts.log.info(
+                f"TechScope detect and identify technologies used on website: {SITE_URL}"
+            )
+            site = ts.open(SITE_URL)
+            results = site.analyze()
+            with open(
+                file="example-techscope.json", mode="w", encoding="utf-8"
+            ) as fjson:
+                json.dump(results, fjson, ensure_ascii=False, indent=4)
+    except ValueError as verror:
+        TechScope.log.error(f"TechScope Error: {verror}")
+    except PWError as pwerror:
+        TechScope.log.error(f"Playwright Error: {pwerror}")
+```
 
 ## Specification
 

@@ -199,7 +199,7 @@ class Site:
                     )
                 )
 
-                self.on_detect(self.original_url.geturl(), all_analyse)
+                self.on_detect(all_analyse)
 
                 requires = (
                     [req for req in self.driver.requires
@@ -228,7 +228,7 @@ class Site:
                         )
                     )
                     if len(require_analyse) > 0:
-                        self.on_detect(self.original_url.geturl(), require_analyse)
+                        self.on_detect(require_analyse)
 
                 resolved = self._resolve_detections()
                 resolved = self._resolve_excludes(resolved)
@@ -261,22 +261,9 @@ class Site:
 
             if hostname not in self.analyzed_xhr[self.original_url.hostname]:
                 self.analyzed_xhr[self.original_url.hostname].append(hostname)
-                self.on_detect(
-                    self.original_url.geturl(), self.driver.analyze({"xhr": hostname})
-                )
+                self.on_detect(self.driver.analyze({"xhr": hostname}))
 
-        if (
-            (self.response_received and route.request.is_navigation_request())
-            or route.request.frame != route.request.frame.page.main_frame
-            or route.request.resource_type
-            not in [
-                "document",
-                *([] if self.driver.options.get("noScripts") else ["script"]),
-            ]
-        ):
-            route.abort("blockedbyclient")
-        else:
-            route.continue_()
+        route.continue_()
 
     def _handle_response(self, response):
         if (
@@ -285,7 +272,7 @@ class Site:
             and response.request.resource_type == "script"
         ):
             scripts = [response.text()]
-            self.on_detect(response.url, self.driver.analyze({"scripts": scripts}))
+            self.on_detect(self.driver.analyze({"scripts": scripts}))
 
         if response.url == self.original_url.geturl():
             self.analyzed_urls[response.request.url] = {
@@ -320,10 +307,7 @@ class Site:
                 if response.security_details()
                 else ""
             )
-            self.on_detect(
-                response.url,
-                self.driver.analyze({"headers": headers, "certIssuer": cert_issuer}),
-            )
+            self.on_detect(self.driver.analyze({"headers": headers, "certIssuer": cert_issuer}))
 
     def _resolve_detections(self):
         resolved = []
@@ -404,7 +388,7 @@ class Site:
             if done:
                 return resolved
 
-    def on_detect(self, url, detections=None):
+    def on_detect(self, detections=None):
         if detections is None:
             detections = []
 

@@ -3,10 +3,10 @@ import json
 import os
 import sys
 import re
+import importlib.metadata
 from itertools import chain
 
 # https://playwright.dev/python/
-# playwright install
 from playwright.sync_api import sync_playwright, Error as PlaywrightError
 
 # https://loguru.readthedocs.io/en/stable/index.html
@@ -25,6 +25,9 @@ logger.add(
 
 
 class TechScope:
+    log = logger.bind(classname=__qualname__)
+    playwright_version = importlib.metadata.version("playwright")
+
     def __init__(self, options=None):
         if options is None:
             options = {}
@@ -40,8 +43,8 @@ class TechScope:
             **options,
         }
 
-        self.chromium_bin = os.environ.get("CHROMIUM_BIN")
-        self.chromium_data_dir = os.environ.get("CHROMIUM_DATA_DIR")
+        # TODO Set in self.options
+        """
         self.chromium_websocket = os.environ.get("CHROMIUM_WEBSOCKET")
         self.chromium_args = os.environ.get("CHROMIUM_ARGS")
 
@@ -58,8 +61,22 @@ class TechScope:
                 "--disable-web-security",
             ]
         )
+        """
+
+        self.chromium_args = [
+                "--single-process",
+                "--no-sandbox",
+                "--no-zygote",
+                "--disable-gpu",
+                "--ignore-certificate-errors",
+                "--allow-running-insecure-content",
+                "--disable-web-security",
+        ]
+        self.chromium_websocket = None
         self._playwright = None
         self.browser = None
+        self.browser_version = None
+        self.browser_name = "Chromium"
         self.destroyed = False
 
         with open(
@@ -224,17 +241,13 @@ class TechScope:
             else:
                 self.browser = self._playwright.chromium.launch(
                     args=self.chromium_args,
-                    executable_path=self.chromium_bin,
                     headless=False,
                 )
 
+            self.browser_version = self.browser.version
+
             def handle_disconnected():
                 logger.info("Browser disconnected")
-                if not self.destroyed:
-                    try:
-                        self.__init__(self.options)
-                    except PlaywrightError as error:
-                        raise PlaywrightError(str(error)) from error
 
             # https://playwright.dev/python/docs/api/class-browser#browser-event-disconnected
             self.browser.on("disconnected", handle_disconnected)
@@ -282,12 +295,12 @@ class TechScope:
         results = []
 
         for item in js:
-            name, chain, value = item["name"], item["chain"], item["value"]
+            iname, ichain, ivalue = item["name"], item["chain"], item["value"]
             technology = next(
-                (tech for tech in technologies if tech["name"] == name), None
+                (tech for tech in technologies if tech["name"] == iname), None
             )
             if technology:
-                result = self._analyze_many_to_many(technology, "js", {chain: [value]})
+                result = self._analyze_many_to_many(technology, "js", {ichain: [ivalue]})
                 results.extend(result)
         return results
 
@@ -448,17 +461,6 @@ class TechScope:
 
         return technologies
 
-    def get_technologyOLD(self, name):
-        # Flatten and combine the lists of technologies
-        combined_technologies = chain(
-            self.technologies,
-            *[tech.get('technologies', []) for req_list in self.requires.values() for tech in req_list],
-            *[tech.get('technologies', []) for req_list in self.category_requires.values() for tech in req_list],
-        )
-
-        # Find the technology by name
-        return next((tech for tech in combined_technologies if tech['name'] == name), None)
-
     def get_technology(self, name):
         # Flatten and combine the lists of technologies
         combined_technologies = chain(
@@ -478,3 +480,5 @@ class TechScope:
             (self.get_category(category_id)['priority'] for category_id in item['technology']['categories']),
             default=0
         )
+
+__all__ = ['TechScope', 'PlaywrightError']
