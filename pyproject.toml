@@ -16,6 +16,7 @@ exclude = [
 python = "^3.10"
 playwright = "^1.47.0"
 loguru = "^0.7.2"
+dnspython = "^2.7.0"
 
 
 [build-system]

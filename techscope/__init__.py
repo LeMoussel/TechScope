@@ -432,32 +432,36 @@ class TechScope:
         type_name, *subtypes = types.split(".")
         technologies = []
 
-        if not technology[type_name]:
+        try:
+            type_dict = technology[type_name]
+            if not type_dict:
+                return technologies
+
+            for key, patterns in type_dict.items():
+                values = items.get(key, [])
+
+                for _pattern in patterns:
+                    pattern = _pattern
+                    for subtype in subtypes:
+                        pattern = pattern.get(subtype, {})
+
+                    for value in values:
+                        matches = re.search(pattern["regex"], str(value))
+                        if matches:
+                            technologies.append(
+                                {
+                                    "technology": technology,
+                                    "pattern": {
+                                        **pattern,
+                                        "type": type_name,
+                                        "value": value,
+                                        "match": matches.group(0),
+                                    },
+                                    "version": self._resolve_version(pattern, value),
+                                }
+                            )
+        except (TypeError, KeyError):
             return technologies
-
-        for key, patterns in technology.get(type_name, {}).items():
-            values = items.get(key, [])
-
-            for _pattern in patterns:
-                pattern = _pattern
-                for subtype in subtypes:
-                    pattern = pattern.get(subtype, {})
-
-                for value in values:
-                    matches = re.search(pattern["regex"], str(value))
-                    if matches:
-                        technologies.append(
-                            {
-                                "technology": technology,
-                                "pattern": {
-                                    **pattern,
-                                    "type": type_name,
-                                    "value": value,
-                                    "match": matches.group(0),
-                                },
-                                "version": self._resolve_version(pattern, value),
-                            }
-                        )
 
         return technologies
 
