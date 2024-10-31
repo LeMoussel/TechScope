@@ -76,6 +76,7 @@ class Site:
             "status": 0,
         }
 
+        # TODO a supprimmer
         self.driver.log.info(
             f"Page analysis: {parsed_url.geturl()} with noScripts={self.driver.options.get('noScripts')} and timeout={self.driver.options.get('maxWait')}"
         )
