@@ -96,8 +96,6 @@ class Site:
 
             page.goto(parsed_url.geturl())
 
-            # print(page.evaluate("navigator.userAgent"))
-
             page.wait_for_load_state("networkidle")
 
             # Cookies

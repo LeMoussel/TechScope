@@ -254,8 +254,12 @@ class TechScope:
 
             self.browser_version = self.browser.version
 
+            page = self.context.new_page()
+            self.user_agent = page.evaluate("() => navigator.userAgent")
+            page.close()
+
             def handle_disconnected():
-                logger.info("Browser disconnected")
+                self.log.info("Browser disconnected")
 
             # https://playwright.dev/python/docs/api/class-browser#browser-event-disconnected
             self.browser.on("disconnected", handle_disconnected)
