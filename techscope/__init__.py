@@ -34,7 +34,6 @@ class TechScope:
 
         self.options = {
             "debug": False,
-            "delay": 500,
             "maxWait": 30000,
             "proxy": False,
             "noScripts": False,
@@ -77,6 +76,7 @@ class TechScope:
         self.browser = None
         self.browser_version = None
         self.browser_name = "Chromium"
+        self.context = None
         self.destroyed = False
 
         with open(
@@ -185,6 +185,7 @@ class TechScope:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.destroyed = True
+        self.context.close()
         self.browser.close()
         self._playwright.stop()
         return False
@@ -243,6 +244,13 @@ class TechScope:
                     args=self.chromium_args,
                     headless=False,
                 )
+            # https://playwright.dev/python/docs/api/class-browser#browser-new-context
+            self.context = self.browser.new_context(
+                ignore_https_errors=True,
+                java_script_enabled=not self.options.get("noScripts", False),
+                user_agent=self.options.get("userAgent", None),
+            )
+            self.context.set_default_timeout(self.options.get("maxWait", 30000))
 
             self.browser_version = self.browser.version
 

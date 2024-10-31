@@ -2,11 +2,7 @@ import re
 from typing import Dict, List
 from urllib.parse import urlparse, urljoin
 
-
 from playwright.sync_api import Route, Error as PlaywrightError
-
-# https://loguru.readthedocs.io/en/stable/index.html
-from loguru import logger
 
 
 class Site:
@@ -80,30 +76,23 @@ class Site:
             "status": 0,
         }
 
-        logger.info(
+        self.driver.log.info(
             f"Page analysis: {parsed_url.geturl()} with noScripts={self.driver.options.get('noScripts')} and timeout={self.driver.options.get('maxWait')}"
         )
 
         try:
-            # https://playwright.dev/python/docs/api/class-browser#browser-new-context
-            context = self.driver.browser.new_context(
-                ignore_https_errors=True,
-                java_script_enabled=not self.driver.options.get("noScripts", False),
-                user_agent=self.driver.options.get("userAgent", None),
-            )
-            page = context.new_page()
-            page.set_default_timeout(self.driver.options.get("maxWait", 30000))
+            page = self.driver.context.new_page()
 
             page.on("dialog", lambda dialog: dialog.dismiss())
             page.on(
                 "pageerror",
-                lambda page, error: logger.error(
+                lambda page, error: self.driver.log.error(
                     f"Error on page: {error.message} ({page.url})"
                 ),
             )
+            page.on("response", self._handle_response)
 
             page.route("**", self._handle_route)
-            page.on("response", self._handle_response)
 
             page.goto(parsed_url.geturl())
 
@@ -112,7 +101,7 @@ class Site:
             page.wait_for_load_state("networkidle")
 
             # Cookies
-            cookies = self._process_cookies(context.cookies())
+            cookies = self._process_cookies(self.driver.context.cookies())
 
             # HTML
             if self.raw_html:
@@ -244,10 +233,9 @@ class Site:
                     for item in sorted(resolved, key=self.driver.get_max_category_priority)
                 ]
 
-                logger.info(f"# Technologies detected: {len(self.detections)}")
+                self.driver.log.info(f"# Technologies detected: {len(self.detections)}")
 
                 page.close()
-                context.close()
         except PlaywrightError as error:
             raise PlaywrightError(str(error)) from error
 
