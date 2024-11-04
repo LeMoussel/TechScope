@@ -38,20 +38,26 @@ Let's look at a basic example that illustrates TechScope's functionality:
 import os
 import json
 
+# https://github.com/LeMoussel/TechScope
 from techscope import TechScope, PlaywrightError as PWError
+
 
 if __name__ == "__main__":
     os.system("cls || clear")
 
     SITE_URL = "https://stackoverflow.com/"
 
-    TechScope.log.info(f"Use Playwright version: {TechScope.playwright_version}")
-
     try:
-        with TechScope() as ts:
+        with TechScope({
+            "debug": True,
+        }) as ts:
             ts.log.info(
-                f"TechScope detect and identify technologies used on website: {SITE_URL}"
+                f"TechScope detect and identify various technologies used on website: {SITE_URL}"
             )
+            ts.log.info('Browser options')
+            for item in ts.options.items():
+                ts.log.info(f"\t{item[0]}: {item[1]}")
+
             site = ts.open(SITE_URL)
             results = site.analyze()
             with open(
