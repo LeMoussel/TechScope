@@ -2,7 +2,10 @@ import re
 from typing import Dict, List
 from urllib.parse import urlparse, urljoin
 
+# https://playwright.dev/python/
 from playwright.sync_api import Route, Error as PlaywrightError
+
+from techscope import dns_record
 
 
 class Site:
@@ -76,11 +79,6 @@ class Site:
             "status": 0,
         }
 
-        # TODO a supprimmer
-        self.driver.log.info(
-            f"Page analysis: {parsed_url.geturl()} with noScripts={self.driver.options.get('noScripts')} and timeout={self.driver.options.get('maxWait')}"
-        )
-
         try:
             page = self.driver.context.new_page()
 
@@ -98,6 +96,19 @@ class Site:
             page.goto(parsed_url.geturl())
 
             page.wait_for_load_state("networkidle")
+
+            # DNS
+            hostname = parsed_url.hostname
+            parts = hostname.split('.')
+            domain = '.'.join(parts[-2:]) if len(parts) > 2 else hostname
+
+            dns_records = {
+                "cname": list(dns_record.resolve_dns_record(domain, 'CNAME')[0]),
+                "ns": list(dns_record.resolve_dns_record(domain, 'NS')[0]),
+                "mx": list(item for item in dns_record.resolve_dns_record(domain, 'MX')[0]),
+                "txt": list(dns_record.resolve_dns_record(domain, 'TXT')[0]),
+                "soa": list(dns_record.resolve_dns_record(domain, 'SOA')[0]),
+            }
 
             # Cookies
             cookies = self._process_cookies(self.driver.context.cookies())
@@ -183,6 +194,7 @@ class Site:
                             "scripts": scripts,
                             "scriptSrc": script_src,
                             "meta": meta,
+                            "dns": dns_records,
                         }
                     )
                 )

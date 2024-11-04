@@ -42,43 +42,16 @@ class TechScope:
             **options,
         }
 
-        # TODO remove
-        #self.chromium_websocket = os.environ.get("CHROMIUM_WEBSOCKET")
-        # TODO Set in self.options
-        """
-        self.chromium_args = os.environ.get("CHROMIUM_ARGS")
+        self.options['chromium_args'] = self.options.get(
+            'chromium_args',
+            '--single-process --no-sandbox --no-zygote --disable-gpu --ignore-certificate-errors --allow-running-insecure-content --disable-web-security'
+        ).split(" ")
 
-        self.chromium_args = (
-            self.chromium_args.split(" ")
-            if self.chromium_args
-            else [
-                "--single-process",
-                "--no-sandbox",
-                "--no-zygote",
-                "--disable-gpu",
-                "--ignore-certificate-errors",
-                "--allow-running-insecure-content",
-                "--disable-web-security",
-            ]
-        )
-        """
-
-        self.chromium_args = [
-                "--single-process",
-                "--no-sandbox",
-                "--no-zygote",
-                "--disable-gpu",
-                "--ignore-certificate-errors",
-                "--allow-running-insecure-content",
-                "--disable-web-security",
-        ]
-        self.chromium_websocket = None
         self._playwright = None
         self.browser = None
         self.browser_version = None
         self.browser_name = "Chromium"
         self.context = None
-        self.destroyed = False
 
         with open(
             file=str(
@@ -180,12 +153,12 @@ class TechScope:
         self._set_technologies()
         self._set_categories()
 
-    def __enter__(self):
         self._init_browser()
+
+    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.destroyed = True
         self.context.close()
         self.browser.close()
         self._playwright.stop()
@@ -236,15 +209,10 @@ class TechScope:
     def _init_browser(self):
         try:
             self._playwright = sync_playwright().start()
-            if self.chromium_websocket:
-                self.browser = self._playwright.chromium.connect_over_cdp(
-                    endpoint_url=self.chromium_websocket,
-                )
-            else:
-                self.browser = self._playwright.chromium.launch(
-                    args=self.chromium_args,
+            self.browser = self._playwright.chromium.launch(
+                    args=self.options['chromium_args'],
                     headless=False,
-                )
+            )
             # https://playwright.dev/python/docs/api/class-browser#browser-new-context
             self.context = self.browser.new_context(
                 ignore_https_errors=True,
@@ -256,8 +224,13 @@ class TechScope:
             self.browser_version = self.browser.version
 
             page = self.context.new_page()
-            self.user_agent = page.evaluate("() => navigator.userAgent")
+            self.options['userAgent'] = page.evaluate("() => navigator.userAgent")
             page.close()
+
+            if self.options['debug'] is True:
+                self.log.debug(f"Playwright version: {self.playwright_version}")
+                self.log.debug(f"Browser {self.browser_name} v{self.browser_version}")
+
 
             def handle_disconnected():
                 self.log.info("Browser disconnected")
