@@ -42,9 +42,10 @@ class TechScope:
             **options,
         }
 
+        # TODO remove
+        #self.chromium_websocket = os.environ.get("CHROMIUM_WEBSOCKET")
         # TODO Set in self.options
         """
-        self.chromium_websocket = os.environ.get("CHROMIUM_WEBSOCKET")
         self.chromium_args = os.environ.get("CHROMIUM_ARGS")
 
         self.chromium_args = (
