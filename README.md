@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
 A long list of [regular expressions](https://docs.python.org/3.10/library/re.html) is used to identify technologies on web pages. TechScope inspects HTML code, as well as JavaScript variables, response headers and more.
 
-Patterns (regular expressions) are kept in [`src/technologies/`](https://github.com/LeMoussel/TechScope/tree/master/techscope/data/technologies). The following is an example of an application fingerprint.
+Patterns (regular expressions) are kept in [`data/technologies/`](https://github.com/LeMoussel/TechScope/tree/master/techscope/data/technologies). The following is an example of an application fingerprint.
 
 ### Example
 
